@@ -1,5 +1,5 @@
 from time import sleep
-from tribonacci_copy import Tribonacci
+from tribonacci import Tribonacci
 from error_inducing_functions import induce_errors
 import numpy as np
 import matplotlib.pyplot as plt

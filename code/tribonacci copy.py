@@ -1,7 +1,5 @@
 import numpy as np
 from pyomo.environ import *
-from pyomo.opt import SolverFactory
-import itertools
 
 alpha =1.83928675521416
 c2_3 = (alpha+1)/alpha
@@ -14,14 +12,6 @@ class Tribonacci:
         self.k = k
         self.n_bits = n_bits
         self._compute_matrices()
-        self._compute_all_possible_error_combinations()
-    
-    def _compute_all_possible_error_combinations(self):
-
-        self.combinations = []
-        
-        for i in range(1, 9):
-            self.combinations.extend([combination for combination in itertools.combinations(range(9), i)])
     
     def _compute_matrices(self):
         # Compute the encode and decode matrices
@@ -37,15 +27,19 @@ class Tribonacci:
         self.encode_matrix = np.array([[self.t[k+i], self.t[k+i-1] + self.t[k+i-2], self.t[k+i-1]] for i in range(2, -1, -1)], dtype=np.int64)
         self.decode_matrix = np.linalg.inv(self.encode_matrix)
 
-        self.e12min = min(self.t[k+i]/(self.t[k+i-1] + self.t[k+i-2]) for i in range(2, -1, -1))
-        self.e12max = max(self.t[k+i]/(self.t[k+i-1] + self.t[k+i-2]) for i in range(2, -1, -1))
+        a = self.t[k+1]**2 - self.t[k]*self.t[k+2]
+        b = self.t[k+1]*self.t[k+2] - self.t[k]*self.t[k+3]
+        c = self.t[k+2]**2 - self.t[k+1]*self.t[k+3]
 
-        self.e23min = min((self.t[k+i]+self.t[k+i-1])/self.t[k+i] for i in range(1, -1, -2))
-        self.e23max = max((self.t[k+i]+self.t[k+i-1])/self.t[k+i] for i in range(1, -1, -2))
+        if a > 0 and b > 0 and c > 0:
+            self.e12min = min(self.t[k+i]/(self.t[k+i-1] + self.t[k+i-2]) for i in range(2, -1, -1))
+            self.e12max = max(self.t[k+i]/(self.t[k+i-1] + self.t[k+i-2]) for i in range(2, -1, -1))
 
-        self.e13min = min(self.t[k+i]/self.t[k+i-1] for i in range(2, -1, -1))
-        self.e13max = max(self.t[k+i]/self.t[k+i-1] for i in range(2, -1, -1))
+            self.e23min = min((self.t[k+i]+self.t[k+i-1])/self.t[k+i] for i in range(1, -1, -2))
+            self.e23max = max((self.t[k+i]+self.t[k+i-1])/self.t[k+i] for i in range(1, -1, -2))
 
+            self.e13min = min(self.t[k+i]/self.t[k+i-1] for i in range(2, -1, -1))
+            self.e13max = max(self.t[k+i]/self.t[k+i-1] for i in range(2, -1, -1))
 
     def encode(self, message):
         #multiply message matrix with encode matrix
@@ -102,18 +96,6 @@ class Tribonacci:
             return True"""
 
         return False
-    
-
-    def solve(self,)
-
-    def correct_all_errors(self, msg, determinant):
-
-        #convert msg to a 1-d list
-        msg = msg.flatten().tolist()
-
-        #loop through all the error combinations
-        for combination in self.combinations:
-
 
     def _correct_single(self, msg, determinant):
         cofactors = np.zeros((3,3), dtype=np.int64) #minors_det[i] = det of minor of msg with element corresponding to x_i+1 removed
