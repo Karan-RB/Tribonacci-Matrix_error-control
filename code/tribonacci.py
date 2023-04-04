@@ -1,12 +1,14 @@
 import numpy as np
+import itertools
 from pyomo.environ import *
 from pyomo.opt import SolverFactory
-import itertools
+from model_helper_functions import *
 
+"""
 alpha =1.83928675521416
 c2_3 = (alpha+1)/alpha
 c1_3 = alpha
-c1_2 = (alpha**2)/(alpha+1)
+c1_2 = (alpha**2)/(alpha+1)"""
 
 class Tribonacci:
 
@@ -15,12 +17,14 @@ class Tribonacci:
         self.n_bits = n_bits
         self._compute_matrices()
         self._compute_all_possible_error_combinations()
+        self.model = get_base_model(self.e12min, self.e12max, self.e23min, self.e23max, self.e13min, self.e13max, self.n_bits, self.encode_matrix.max())
+        self.solver = SolverFactory('couenne')
     
     def _compute_all_possible_error_combinations(self):
 
         self.combinations = []
         
-        for i in range(1, 9):
+        for i in range(8, 0, -1):
             self.combinations.extend([combination for combination in itertools.combinations(range(9), i)])
     
     def _compute_matrices(self):
@@ -84,37 +88,28 @@ class Tribonacci:
         corrected = False
         
         if self._check(encoded_message, determinant) == False:
-            corrected = True
-            self.correct(encoded_message, determinant)
+            corrected, recovered_msg = self.correct(encoded_message, determinant)
             
-        return encoded_message, self.decode(encoded_message)-1, corrected
+        return corrected, self.decode(encoded_message)-1, recovered_msg
     
-    def correct(self, msg, determinant):
-
-        #correct single errors
-        done = self._correct_single(msg, determinant)
-        if done:
-            return True
+    def correct(self, encoded_message, determinant):
         
-        #correct double errors
-        """done = self._correct_double(msg, determinant)
-        if done:
-            return True"""
-
-        return False
-    
-
-    def solve(self,)
-
-    def correct_all_errors(self, msg, determinant):
-
-        #convert msg to a 1-d list
-        msg = msg.flatten().tolist()
-
-        #loop through all the error combinations
+        instance = create_instance(self.model, determinant)
+        values = encoded_message.flatten().tolist()
         for combination in self.combinations:
 
+            problem = create_problem(instance, combination, values)
+            solved = solve_problem(problem, self.solver)
 
+            if not solved:
+                continue
+
+            recovered_msg = np.array([value(problem.a[i]) for i in range(9)], dtype=np.int64).reshape(3,3)
+            return True, recovered_msg
+
+        return False, None
+
+    """
     def _correct_single(self, msg, determinant):
         cofactors = np.zeros((3,3), dtype=np.int64) #minors_det[i] = det of minor of msg with element corresponding to x_i+1 removed
 
@@ -143,10 +138,6 @@ class Tribonacci:
         best_fit = self._best_fit_single_error(msg, determinant, possible_corrections)
         msg[best_fit[0]][best_fit[1]] = best_fit[2]
 
-
-    def _correct_double(self, msg, determinant):
-
-        pass
     
     def _best_fit_single_error(self, msg, determinant, possible_corrections):
         #find the best fit correction
@@ -183,7 +174,7 @@ class Tribonacci:
         
         error = (abs(c1/c3 - c1_3) + abs(c2/c3 - c2_3) + abs(c1/c2 - c1_2))
         
-        return error
+        return error"""
         
 
 def test_single_error():
@@ -194,5 +185,3 @@ def test_double_error():
     trib = Tribonacci(10)
     print(trib.receive(np.array([[ 815,  684,  443], [2311, 1921, 1273], [1000, 3222, 2087]]), 0))       
     
-
-

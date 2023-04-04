@@ -10,6 +10,8 @@ def compute(k = 10):
         t[i] = t[i - 1] + t[i - 2] + t[i - 3]
     
     encode_matrix = np.array([[t[k+i], t[k+i-1] + t[k+i-2], t[k+i-1]] for i in range(2, -1, -1)], dtype=np.int64)
+    max_num = max(encode_matrix.flatten())
+    print(max_num)
     decode_matrix = np.linalg.inv(encode_matrix)
 
     e12min = min(t[k+i]/(t[k+i-1] + t[k+i-2]) for i in range(2, -1, -1))
