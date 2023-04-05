@@ -1,12 +1,10 @@
-from time import sleep
 from tribonacci import Tribonacci
 from error_inducing_functions import induce_errors
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 MAX_BITS_MSG = 8
-TOTAL_ROUNDS = 1000000
+TOTAL_ROUNDS = 10000
 START = 2
 END = 10
 
@@ -24,6 +22,7 @@ for i in range(START, END):
 
     t_mis_corrected = 0
     t_not_detected = 0
+    t_retransmit = 0
 
     #set the seed for np random
     np.random.seed(0)
@@ -37,10 +36,13 @@ for i in range(START, END):
         encoded, determinant = sender.send(msg)
         
         #induce a single error in the encoded matrix
-        induce_errors(encoded, 1, max_bits_enc)
+        induce_errors(encoded, error_rate=0.001, n_bits=max_bits_enc)
 
         #receive the message and decode it
-        _, decoded, corrected = receiver.receive(encoded, determinant)
+        corrected, decoded = receiver.receive(encoded, determinant)
+
+        if decoded is None:
+            t_retransmit += 1
 
         if np.array_equal(msg, decoded):
             continue
@@ -49,24 +51,14 @@ for i in range(START, END):
             t_not_detected += 1
 
         else:
-            #if det of encoded is -ve, then continue
-            if np.linalg.det(encoded) < 0:
-                continue
-            print("Mis Corrected:")
-            print("Message: ", msg)
-            print("Encoded: ", sender.send(msg)[0])
-            print("Encoded received: ", encoded)
-            print("Encoded corrected:", sender.send(decoded)[0])
-            print("determinant of encoded: ", np.linalg.det(encoded))
-            print("Decoded: ", decoded)
-            sleep(150)
             t_mis_corrected += 1
     
     not_detected_errs.append(t_not_detected)
     mis_corrected_errs.append(t_mis_corrected)
     
-    print(f"For k = {i}:\nNot detected = {t_not_detected}\nMis_Corrected = {t_mis_corrected}\n")
-    
+    print(f"For k = {i}:\nNot detected = {t_not_detected}\nMis_Corrected = {t_mis_corrected}\nRetransmitted = {t_retransmit}\n")
+
+"""    
 #create a bar graph showing t_miscorrected over t_not_detected
 fig = plt.subplots(figsize =(10, 10))
 p1 = plt.bar(np.arange(START, END), not_detected_errs)
@@ -78,4 +70,4 @@ plt.title('Single error correction failure counts')
 plt.xticks(np.arange(START, END))
 plt.legend((p1[0], p2[0]), ('Undetected_errors', 'Mis_corrected_errors'))
  
-plt.savefig("single_error_results.jpg")
+plt.savefig("single_error_results.jpg")"""

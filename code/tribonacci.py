@@ -93,14 +93,21 @@ class Tribonacci:
         corrected = False
         
         if self._check(encoded_message, determinant) == False:
+
             corrected, recovered_msg = self.correct(encoded_message, determinant)
+
+            if not corrected:
+                return False, None
             
-        return corrected, self.decode(encoded_message)-1, recovered_msg
+            encoded_message = recovered_msg
+            
+        return corrected, self.decode(encoded_message)-1
     
     def correct(self, encoded_message, determinant):
         
         instance = create_instance(self.model, determinant)
         values = encoded_message.flatten().tolist()
+        
         for combination in self.combinations:
 
             problem = create_problem(instance, combination, values)
