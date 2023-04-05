@@ -63,19 +63,6 @@ class Tribonacci:
     def send(self, message):
         #add 1 to each element of the matrix to avoid 0s in the encoded matrix
         return self.encode(message+1), int(np.round(np.linalg.det(message+1)))
-
-    #we are going to use xor to mutate the message after generating a number where p(any bit = 1) = error_rate
-    def _mutate(self, message, error_rate=0.01):
-            
-        def get_num():
-            seq = np.random.choice(["0", "1"], size=self.n_bits, p=[1-error_rate, error_rate])
-            return int("".join(seq), 2)
-        
-        for i in range(len(message)):
-            for j in range(len(message[0])):
-                message[i][j] ^= get_num()
-        
-        return message
     
     def _check_rows(self, encoded_message):
         for row in encoded_message:
