@@ -77,10 +77,28 @@ class Tribonacci:
         
         return message
     
+    def _check_rows(self, encoded_message):
+        for row in encoded_message:
+            e12 = row[0]/row[1]
+            e23 = row[1]/row[2]
+            e13 = row[0]/row[2]
+
+            if e12 < self.e12min or e12 > self.e12max:
+                return False
+            if e23 < self.e23min or e23 > self.e23max:
+                return False
+            if e13 < self.e13min or e13 > self.e13max:
+                return False
+        
+        return True
+    
     def _check(self, encoded_message, determinant):
         #check if the determinant of the encoded message is equal to the determinant of the original message
-        if int(np.round(np.linalg.det(encoded_message))) == determinant:
-            return True
+        if int(np.round(np.linalg.det(encoded_message))) != determinant:
+            return False
+
+        if self._check_rows(encoded_message) == False:
+            return False
         return False
 
     def receive(self, encoded_message, determinant):
