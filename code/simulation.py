@@ -5,7 +5,7 @@ import numpy as np
 
 MAX_BITS_MSG = 8
 TOTAL_ROUNDS = 10000
-START = 2
+START = 6
 END = 10
 
 not_detected_errs = []

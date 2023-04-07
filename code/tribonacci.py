@@ -31,8 +31,8 @@ class Tribonacci:
         # Compute the encode and decode matrices
         k = self.k
         self.t = np.zeros((k + 4))
-        if k < 2:
-            raise ValueError("k must be at least 2")
+        if k < 4:
+            raise ValueError("k must be at least 4")
         
         self.t[2] = 1
         for i in range(3, k + 4):
@@ -44,8 +44,8 @@ class Tribonacci:
         self.e12min = min(self.t[k+i]/(self.t[k+i-1] + self.t[k+i-2]) for i in range(2, -1, -1))
         self.e12max = max(self.t[k+i]/(self.t[k+i-1] + self.t[k+i-2]) for i in range(2, -1, -1))
 
-        self.e23min = min((self.t[k+i]+self.t[k+i-1])/self.t[k+i] for i in range(1, -1, -2))
-        self.e23max = max((self.t[k+i]+self.t[k+i-1])/self.t[k+i] for i in range(1, -1, -2))
+        self.e23min = min((self.t[k+i]+self.t[k+i-1])/self.t[k+i] for i in range(1, -2, -1))
+        self.e23max = max((self.t[k+i]+self.t[k+i-1])/self.t[k+i] for i in range(1, -2, -1))
 
         self.e13min = min(self.t[k+i]/self.t[k+i-1] for i in range(2, -1, -1))
         self.e13max = max(self.t[k+i]/self.t[k+i-1] for i in range(2, -1, -1))
@@ -86,7 +86,8 @@ class Tribonacci:
 
         if self._check_rows(encoded_message) == False:
             return False
-        return False
+
+        return True
 
     def receive(self, encoded_message, determinant):
         #print("Received encoded message: ", encoded_message, '\n')
