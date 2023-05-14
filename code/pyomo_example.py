@@ -16,7 +16,7 @@ max_message=2**8
 orig_array = np.array([34806, 29206, 18920, 84605, 71006, 45992, 71633, 60130, 38945], dtype=np.int64)
 
 # define the fixed values
-fixed = [None, 29202, None, None, 71006, 45992, 71633, 60130, 38945]
+fixed = [None, 29206, None, None, 71006, 45992, 71633, 60130, 38945]
 det = 1386566
 
 # create a model
@@ -70,9 +70,10 @@ results = solver.solve(model, tee=True)
 if results.solver.termination_condition == TerminationCondition.infeasible:
     print("Can't be solved.")
 
-a = np.array([value(model.a[i]) for i in range(9)], dtype=np.int64)
-
-if np.array_equal(a, orig_array):
-    print("Successful correction")
 else:
-    print("Unsuccessful correction")
+    a = np.array([value(model.a[i]) for i in range(9)], dtype=np.int64)
+
+    if np.array_equal(a, orig_array):
+        print("Successful correction")
+    else:
+        print("Unsuccessful correction")
