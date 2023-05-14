@@ -187,14 +187,5 @@ class Tribonacci:
         
         error = (abs(c1/c3 - c1_3) + abs(c2/c3 - c2_3) + abs(c1/c2 - c1_2))
         
-        return error"""
-        
-
-def test_single_error():
-    trib = Tribonacci(10)
-    print(trib.receive(np.array([[ 815,  684,  443], [2311, 1921, 1273], [3839, 3222, 2087]]), 0))
-
-def test_double_error():
-    trib = Tribonacci(10)
-    print(trib.receive(np.array([[ 815,  684,  443], [2311, 1921, 1273], [1000, 3222, 2087]]), 0))       
+        return error"""    
     

@@ -5,7 +5,7 @@ import numpy as np
 # define bounds for the variables
 e12min = 1.1911764705882353
 e12max = 1.192
-e23min = 1.5432098765432098
+e23min = 1.5432098765432098 
 e23max = 1.5454545454545454
 e13min = 1.8389261744966443
 e13max = 1.8409090909090908
@@ -16,7 +16,7 @@ max_message=2**8
 orig_array = np.array([34806, 29206, 18920, 84605, 71006, 45992, 71633, 60130, 38945], dtype=np.int64)
 
 # define the fixed values
-fixed = [None, 29202, None, None, 71006, 45992, 71633, 60130, 38945]
+fixed = [None, 29206, None, None, 71006, 45992, 71633, 60130, 38945]
 det = 1386566
 
 # create a model
@@ -70,9 +70,10 @@ results = solver.solve(model, tee=True)
 if results.solver.termination_condition == TerminationCondition.infeasible:
     print("Can't be solved.")
 
-a = np.array([value(model.a[i]) for i in range(9)], dtype=np.int64)
-
-if np.array_equal(a, orig_array):
-    print("Successful correction")
 else:
-    print("Unsuccessful correction")
+    a = np.array([value(model.a[i]) for i in range(9)], dtype=np.int64)
+
+    if np.array_equal(a, orig_array):
+        print("Successful correction")
+    else:
+        print("Unsuccessful correction")
