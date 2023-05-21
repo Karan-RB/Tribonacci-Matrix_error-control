@@ -33,7 +33,7 @@ for i in range(START, END+1):
         t_not_detected = 0
         total_time = 0
 
-        for _ in range(rounds[j]):
+        for _ in range(rounds[j-1]):
 
             #create a 3x3 matrix filled with integers and get its determinant
             msg = np.random.randint(0, 2**MAX_BITS_MSG-1, (3,3))
@@ -66,9 +66,9 @@ for i in range(START, END+1):
             else:
                 t_mis_corrected += 1
         
-        not_detected_errs.append(t_not_detected/rounds[j])
-        mis_corrected_errs.append(t_mis_corrected/rounds[j])
-        time_taken.append(total_time/rounds[j])
+        not_detected_errs.append(t_not_detected/rounds[j-1])
+        mis_corrected_errs.append(t_mis_corrected/rounds[j-1])
+        time_taken.append(total_time/rounds[j-1])
         
         print(f"For k = {i}:\nNot detected = {t_not_detected}\nMis_Corrected = {t_mis_corrected}\nTime={total_time/rounds[j]}\n")
 
